@@ -13,6 +13,12 @@ const register = async (req, res, next) => {
   if (!name || !email || !password) {
     throw new BadRequestError("Please provide name , email or password");
   }
+
+  const emailAlreadyExists = await UserSchema.findOne({email})
+ if(emailAlreadyExists){
+  throw new BadRequestError("Email already exists");
+ }
+
   const isFirstAccount = (await UserSchema.countDocuments({})) === 0;
   const role = isFirstAccount ? "admin" : "user";
   const user = await UserSchema.create({ name, email, password, role });
